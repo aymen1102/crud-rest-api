@@ -28,11 +28,9 @@ public class IngredientService {
     @Transactional
     public Optional<IngredientDto> getById(Long id) {
         Optional<Ingredient> ingredient = ingredientRepository.getById(id);
-
         if (!ingredient.isPresent()) {
             throw new ElementNotFoundException();
         }
-
         return Optional.of(new IngredientDto(ingredient.get()));
     }
 

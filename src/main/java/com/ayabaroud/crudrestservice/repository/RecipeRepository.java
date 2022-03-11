@@ -23,56 +23,34 @@ public class RecipeRepository {
     }
 
     public List<Recipe> getAll() {
-        /**
-         * get the current Hibernate Session from the EntityManager
-         */
         Session session = entityManager.unwrap(Session.class);
         Query<Recipe> query = session.createQuery(QUERY_FIND_ALL, Recipe.class);
         return query.getResultList();
     }
 
     public Optional<Recipe> getById(Long id) {
-        /**
-         * get the current Hibernate Session from the EntityManager
-         */
         Session session = entityManager.unwrap(Session.class);
         return Optional.of(session.get(Recipe.class, id));
     }
 
     public Optional<Long> create(Recipe recipe) {
-        /**
-         * get the current Hibernate Session from the EntityManager
-         */
-        if (recipe.getId() == null) {
-            Session session = entityManager.unwrap(Session.class);
-            return Optional.of((long) session.save(recipe));
-        }
-
-        return Optional.empty();
+        Session session = entityManager.unwrap(Session.class);
+        return Optional.of((long) session.save(recipe));
     }
 
-    public void update(Recipe recipe)
-        /**
-         * get the current Hibernate Session from the EntityManager
-         */{
+    public void update(Recipe recipe) {
         Session session = entityManager.unwrap(Session.class);
         session.get(Recipe.class, recipe.getId());
         session.merge(recipe);
     }
 
     public void delete(Recipe recipe) {
-        /**
-         * get the current Hibernate Session from the EntityManager
-         */
         Session session = entityManager.unwrap(Session.class);
         Recipe recipeInDB = session.get(Recipe.class, recipe.getId());
         session.remove(recipeInDB);
     }
 
     public void deleteById(Long id) {
-        /**
-         * get the current Hibernate Session from the EntityManager
-         */
         Session session = entityManager.unwrap(Session.class);
         Recipe recipeInDB = session.get(Recipe.class, id);
         session.remove(recipeInDB);

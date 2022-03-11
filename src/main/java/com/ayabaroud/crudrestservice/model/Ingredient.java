@@ -17,7 +17,7 @@ public class Ingredient {
     @Column(name = "ingredient_id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
 	public Ingredient() {

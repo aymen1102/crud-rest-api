@@ -4,8 +4,9 @@
 3 - Create a postgres database named `restservices` <br />
 4 - Run the spring boot app<br />
 5 - Use postman to try requests  :<br />
-* find all ingredients : `GET` `localhost:8091/api/v1/ingredients`
-* find ingredient by Id using the path : `GET` `localhost:8091/api/v1/ingredients/{id}`
-* add an ingredient : `POST` `localhost:8091/api/v1/ingredients` `{"name": "cheese"}`
-* delete an ingredient : `GET` `localhost:8091/api/v1/ingredients` `{"id": 3,"name": "cheese"}`
+6 - Use OpenAPI/SWAGGER to notice all the requests `http://localhost:8091/swagger-ui/index.html#/`<br />
+* find all ingredients : `GET` `localhost:8091/api/v1/ingredients`<br />
+* find ingredient by Id using the path : `GET` `localhost:8091/api/v1/ingredients/{id}`<br />
+* add an ingredient : `POST` `localhost:8091/api/v1/ingredients` `{"name": "cheese"}`<br />
+* delete an ingredient : `GET` `localhost:8091/api/v1/ingredients` `{"id": 3,"name": "cheese"}`<br />
 

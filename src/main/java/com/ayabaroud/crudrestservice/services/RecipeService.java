@@ -33,13 +33,10 @@ public class RecipeService {
     @Transactional
     public Optional<RecipeDto> getById(Long id) {
         Optional<Recipe> recipe = recipeRepository.getById(id);
-
         if (!recipe.isPresent()) {
             throw new ElementNotFoundException();
         }
-
         setupIngredients(recipe.get());
-
         return Optional.of(new RecipeDto(recipe.get()));
     }
 
@@ -53,7 +50,6 @@ public class RecipeService {
     @Transactional
     public void addIngredients(Long id, List<RecipeIngredientDto> ingredients) {
         Optional<RecipeDto> recipeDto = getById(id);
-
         if (recipeDto.isPresent()) {
             recipeDto.get().getIngredients().addAll(ingredients);
             Recipe recipe = recipeDto.get().toRecipe();
@@ -65,15 +61,7 @@ public class RecipeService {
     @Transactional
     public void update(RecipeDto recipeDto) {
         Optional<RecipeDto> recipeDtoOpt = getById(recipeDto.getId());
-
-        if (recipeDtoOpt.isPresent()) {
-            recipeDtoOpt.get().setIngredients(recipeDto.getIngredients());
-            Recipe recipe = recipeDtoOpt.get().toRecipe();
-
-            setupIngredients(recipe);
-
-            recipeRepository.update(recipe);
-        }
+        recipeRepository.update(recipeDto.toRecipe());
     }
 
     private void setupIngredients(Recipe recipe) {

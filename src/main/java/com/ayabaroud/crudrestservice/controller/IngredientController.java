@@ -4,6 +4,7 @@ import com.ayabaroud.crudrestservice.dto.IngredientDto;
 import com.ayabaroud.crudrestservice.exceptions.ElementNotFoundException;
 import com.ayabaroud.crudrestservice.model.Ingredient;
 import com.ayabaroud.crudrestservice.services.IngredientService;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,8 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
+@OpenAPIDefinition
 @RestController
-@RequestMapping(value = "/api/v1/ingredients")
+@RequestMapping("/api/v1/ingredients")
 public class IngredientController {
 
     private final IngredientService ingredientService;
@@ -29,60 +31,50 @@ public class IngredientController {
     }
 
     @CrossOrigin
-    @GetMapping
+    @GetMapping("/getAll")
     public List<IngredientDto> getAll() {
         return ingredientService.getAll();
     }
 
     @CrossOrigin
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<IngredientDto> getById(@PathVariable("id") final Long id) {
+    @GetMapping("/getIngredientById/{id}")
+    public ResponseEntity<IngredientDto> getIngredientById(@PathVariable("id") final Long id) {
         Optional<IngredientDto> ingredientDto = ingredientService.getById(id);
-
         if (ingredientDto.isPresent()) {
             return ResponseEntity.ok(ingredientDto.get());
         }
-
         throw new ElementNotFoundException();
     }
 
-    /**
-     * @param name : Name of the ingredient (Not unique).
-     * @return The id of the ingredient created
-     */
     @CrossOrigin
-    @PostMapping
-    public ResponseEntity create(@RequestBody final String name) {
+    @PostMapping("/createIngredient")
+    public ResponseEntity createIngredient(@RequestBody final String name) {
         Optional<Long> ingredientId = ingredientService.create(name);
-
         if (ingredientId.isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(ingredientId.get());
         }
-
         return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
     }
 
     @CrossOrigin
-    @PutMapping
-    public ResponseEntity<Ingredient> update(@RequestBody IngredientDto ingredientDto) {
+    @PutMapping("/updateIngredient")
+    public ResponseEntity<Ingredient> updateIngredient(@RequestBody IngredientDto ingredientDto) {
         Optional<Ingredient> ingredient = ingredientService.update(ingredientDto);
-
         if (ingredient.isPresent()) {
             return ResponseEntity.ok(ingredient.get());
         }
-
         return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
     }
 
     @CrossOrigin
-    @DeleteMapping
-    public void delete(@RequestBody IngredientDto ingredientDto) {
+    @DeleteMapping("/deleteIngredient")
+    public void deleteIngredient(@RequestBody IngredientDto ingredientDto) {
         ingredientService.delete(ingredientDto);
     }
 
     @CrossOrigin
-    @DeleteMapping(value = "/{id}")
-    public void deleteById(@PathVariable("id") final Long id) {
+    @DeleteMapping("/deleteIngredientById/{id}")
+    public void deleteIngredientById(@PathVariable("id") final Long id) {
         ingredientService.deleteById(id);
     }
 }

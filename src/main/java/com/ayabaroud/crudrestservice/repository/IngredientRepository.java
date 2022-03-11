@@ -34,12 +34,10 @@ public class IngredientRepository {
     }
 
     public Optional<Long> create(Ingredient ingredient) {
-
         if (ingredient.getId() == null) {
             Session session = entityManager.unwrap(Session.class);
             return Optional.of((long) session.save(ingredient));
         }
-
         return Optional.empty();
     }
 
