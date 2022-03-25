@@ -4,6 +4,8 @@ import com.ayabaroud.crudrestservice.dto.IngredientDto;
 import com.ayabaroud.crudrestservice.exceptions.ElementNotFoundException;
 import com.ayabaroud.crudrestservice.repository.IngredientRepository;
 import com.ayabaroud.crudrestservice.model.Ingredient;
+import com.ayabaroud.crudrestservice.repository.hibernate.IngredientHibernateRepository;
+import com.ayabaroud.crudrestservice.repository.jdbc.IngredientJdbcRepository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,14 +17,22 @@ import java.util.stream.Collectors;
 public class IngredientService {
 
     private final IngredientRepository ingredientRepository;
+    private final IngredientJdbcRepository ingredientJdbcRepository;
+    private final IngredientHibernateRepository ingredientHibernateRepository;
 
-    public IngredientService(IngredientRepository ingredientRepository) {
+    public IngredientService(IngredientRepository ingredientRepository,
+                             IngredientJdbcRepository ingredientJdbcRepository,
+                             IngredientHibernateRepository ingredientHibernateRepository) {
         this.ingredientRepository = ingredientRepository;
+        this.ingredientJdbcRepository = ingredientJdbcRepository;
+        this.ingredientHibernateRepository = ingredientHibernateRepository;
     }
 
     @Transactional
     public List<IngredientDto> getAll() {
-        return ingredientRepository.getAll().stream().map(IngredientDto::new).collect(Collectors.toList());
+        return ingredientHibernateRepository.getAll().stream()
+                .map(IngredientDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
