@@ -1,58 +1,77 @@
 package com.ayabaroud.crudrestservice.repository.hibernate;
 
 import com.ayabaroud.crudrestservice.model.Ingredient;
+import com.ayabaroud.crudrestservice.repository.IngredientRepository;
+import com.ayabaroud.crudrestservice.repository.hibernate.utils.HibernateUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class IngredientHibernateRepository {
+public class IngredientHibernateRepository implements IngredientRepository {
 
-    private static Session session;
-    private static SessionFactory sessionFactory;
-    private static StandardServiceRegistry registry;
+    public IngredientHibernateRepository() {
+    }
 
     public List<Ingredient> getAll(){
         List<Ingredient> ingredientList = new ArrayList<>();
-        session = buildSessionFactory().openSession();
+        SessionFactory sessionFactory = HibernateUtils.getSessionFactory();
+        Session session = sessionFactory.openSession();
         session.beginTransaction();
         ingredientList = session.createQuery("from Ingredient",Ingredient.class).getResultList();
         return ingredientList;
     }
 
-    /** This Method Is Used To Create The Hibernate's SessionFactory Object */
-    private static SessionFactory buildSessionFactory() {
-        if (sessionFactory == null) {
-            try {
-                // Create registry
-                registry = new StandardServiceRegistryBuilder().configure().build();
-
-                // Create MetadataSources
-                MetadataSources sources = new MetadataSources(registry);
-
-                // Create Metadata
-                Metadata metadata = sources.getMetadataBuilder().build();
-
-                // Create SessionFactory
-                sessionFactory = metadata.getSessionFactoryBuilder().build();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (registry != null) {
-                    StandardServiceRegistryBuilder.destroy(registry);
-                }
-            }
+    public Optional<Ingredient> getById(Long id){
+        Optional<Ingredient> ingredientOptional = null;
+        Transaction transaction = null;
+        try{
+            SessionFactory sessionFactory = HibernateUtils.getSessionFactory();
+            Session session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            ingredientOptional = Optional.ofNullable(session.get(Ingredient.class, id));
+            transaction.commit();
+        } catch (Exception e){
+            transaction.rollback();
+            e.printStackTrace();
         }
-        return sessionFactory;
+        return ingredientOptional;
+    }
+
+    public Optional<Long> create(Ingredient ingredient){
+        Optional<Long> longOptional = null;
+        Transaction transaction = null;
+        try {
+            SessionFactory sessionFactory = HibernateUtils.getSessionFactory();
+            Session session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            longOptional = Optional.ofNullable((long) session.save(ingredient));
+            transaction.commit();
+        } catch (Exception e){
+            transaction.rollback();
+            e.printStackTrace();
+        }
+        return longOptional;
+    }
+
+    @Override
+    public Optional<Ingredient> update(Ingredient ingredient) {
+        return Optional.empty();
+    }
+
+    @Override
+    public void delete(Ingredient ingredient) {
+
+    }
+
+    @Override
+    public void deleteById(Long id) {
+
     }
 
 }

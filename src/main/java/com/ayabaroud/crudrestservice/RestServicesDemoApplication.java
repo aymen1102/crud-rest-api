@@ -6,7 +6,7 @@ import java.util.Set;
 import com.ayabaroud.crudrestservice.dto.IngredientDto;
 import com.ayabaroud.crudrestservice.dto.RecipeDto;
 import com.ayabaroud.crudrestservice.dto.RecipeIngredientDto;
-import com.ayabaroud.crudrestservice.repository.RecipeRepository;
+import com.ayabaroud.crudrestservice.repository.entitymanager.RecipeRepository;
 import com.ayabaroud.crudrestservice.services.IngredientService;
 import com.ayabaroud.crudrestservice.services.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;

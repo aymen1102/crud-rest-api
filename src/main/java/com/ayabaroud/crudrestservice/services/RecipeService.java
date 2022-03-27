@@ -4,7 +4,7 @@ import com.ayabaroud.crudrestservice.dto.RecipeDto;
 import com.ayabaroud.crudrestservice.dto.RecipeIngredientDto;
 import com.ayabaroud.crudrestservice.exceptions.ElementNotFoundException;
 import com.ayabaroud.crudrestservice.repository.IngredientRepository;
-import com.ayabaroud.crudrestservice.repository.RecipeRepository;
+import com.ayabaroud.crudrestservice.repository.entitymanager.RecipeEntityManagerRepository;
 import com.ayabaroud.crudrestservice.model.Ingredient;
 import com.ayabaroud.crudrestservice.model.Recipe;
 import org.springframework.stereotype.Service;
@@ -17,22 +17,22 @@ import java.util.stream.Collectors;
 @Service
 public class RecipeService {
 
-    private final RecipeRepository recipeRepository;
+    private final RecipeEntityManagerRepository recipeEntityManagerRepository;
     private final IngredientRepository ingredientRepository;
 
-    public RecipeService(RecipeRepository recipeRepository, IngredientRepository ingredientRepository) {
-        this.recipeRepository = recipeRepository;
+    public RecipeService(RecipeEntityManagerRepository recipeEntityManagerRepository, IngredientRepository ingredientRepository) {
+        this.recipeEntityManagerRepository = recipeEntityManagerRepository;
         this.ingredientRepository = ingredientRepository;
     }
 
     @Transactional
     public List<RecipeDto> getAll() {
-        return recipeRepository.getAll().stream().map(RecipeDto::new).collect(Collectors.toList());
+        return recipeEntityManagerRepository.getAll().stream().map(RecipeDto::new).collect(Collectors.toList());
     }
 
     @Transactional
     public Optional<RecipeDto> getById(Long id) {
-        Optional<Recipe> recipe = recipeRepository.getById(id);
+        Optional<Recipe> recipe = recipeEntityManagerRepository.getById(id);
         if (!recipe.isPresent()) {
             throw new ElementNotFoundException();
         }
@@ -44,7 +44,7 @@ public class RecipeService {
     public Optional<Long> create(RecipeDto recipeDto) {
         Recipe recipe = recipeDto.toRecipe();
         setupIngredients(recipe);
-        return recipeRepository.create(recipe);
+        return recipeEntityManagerRepository.create(recipe);
     }
 
     @Transactional
@@ -54,14 +54,14 @@ public class RecipeService {
             recipeDto.get().getIngredients().addAll(ingredients);
             Recipe recipe = recipeDto.get().toRecipe();
             setupIngredients(recipe);
-            recipeRepository.update(recipe);
+            recipeEntityManagerRepository.update(recipe);
         }
     }
 
     @Transactional
     public void update(RecipeDto recipeDto) {
         Optional<RecipeDto> recipeDtoOpt = getById(recipeDto.getId());
-        recipeRepository.update(recipeDto.toRecipe());
+        recipeEntityManagerRepository.update(recipeDto.toRecipe());
     }
 
     private void setupIngredients(Recipe recipe) {
@@ -74,11 +74,11 @@ public class RecipeService {
 
     @Transactional
     public void delete(RecipeDto recipeDto) {
-        recipeRepository.delete(recipeDto.toRecipe());
+        recipeEntityManagerRepository.delete(recipeDto.toRecipe());
     }
 
     @Transactional
     public void deleteById(Long id) {
-        recipeRepository.deleteById(id);
+        recipeEntityManagerRepository.deleteById(id);
     }
 }

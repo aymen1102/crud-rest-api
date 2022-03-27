@@ -6,6 +6,8 @@ import com.ayabaroud.crudrestservice.repository.IngredientRepository;
 import com.ayabaroud.crudrestservice.model.Ingredient;
 import com.ayabaroud.crudrestservice.repository.hibernate.IngredientHibernateRepository;
 import com.ayabaroud.crudrestservice.repository.jdbc.IngredientJdbcRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,21 +18,17 @@ import java.util.stream.Collectors;
 @Service
 public class IngredientService {
 
+    @Autowired
+    @Qualifier("ingredientJdbcRepository")
     private final IngredientRepository ingredientRepository;
-    private final IngredientJdbcRepository ingredientJdbcRepository;
-    private final IngredientHibernateRepository ingredientHibernateRepository;
 
-    public IngredientService(IngredientRepository ingredientRepository,
-                             IngredientJdbcRepository ingredientJdbcRepository,
-                             IngredientHibernateRepository ingredientHibernateRepository) {
+    public IngredientService(IngredientRepository ingredientRepository) {
         this.ingredientRepository = ingredientRepository;
-        this.ingredientJdbcRepository = ingredientJdbcRepository;
-        this.ingredientHibernateRepository = ingredientHibernateRepository;
     }
 
     @Transactional
     public List<IngredientDto> getAll() {
-        return ingredientHibernateRepository.getAll().stream()
+        return ingredientRepository.getAll().stream()
                 .map(IngredientDto::new)
                 .collect(Collectors.toList());
     }
@@ -41,7 +39,7 @@ public class IngredientService {
         if (!ingredient.isPresent()) {
             throw new ElementNotFoundException();
         }
-        return Optional.of(new IngredientDto(ingredient.get()));
+        return Optional.ofNullable(new IngredientDto(ingredient.get()));
     }
 
     @Transactional
