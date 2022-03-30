@@ -1,12 +1,7 @@
 package com.ayabaroud.crudrestservice.repository.jdbc;
 
-import com.ayabaroud.crudrestservice.dto.IngredientDto;
 import com.ayabaroud.crudrestservice.model.Ingredient;
 import com.ayabaroud.crudrestservice.repository.IngredientRepository;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
-import org.springframework.jdbc.support.JdbcUtils;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
