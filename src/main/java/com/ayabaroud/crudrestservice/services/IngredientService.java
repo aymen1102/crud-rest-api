@@ -1,13 +1,9 @@
 package com.ayabaroud.crudrestservice.services;
 
-import com.ayabaroud.crudrestservice.dto.IngredientDto;
 import com.ayabaroud.crudrestservice.exceptions.ElementNotFoundException;
-import com.ayabaroud.crudrestservice.repository.IngredientRepository;
 import com.ayabaroud.crudrestservice.model.Ingredient;
-import com.ayabaroud.crudrestservice.repository.hibernate.IngredientHibernateRepository;
-import com.ayabaroud.crudrestservice.repository.jdbc.IngredientJdbcRepository;
+import com.ayabaroud.crudrestservice.repository.IngredientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,7 +15,6 @@ import java.util.stream.Collectors;
 public class IngredientService {
 
     @Autowired
-    @Qualifier("ingredientJdbcRepository")
     private final IngredientRepository ingredientRepository;
 
     public IngredientService(IngredientRepository ingredientRepository) {
@@ -27,19 +22,18 @@ public class IngredientService {
     }
 
     @Transactional
-    public List<IngredientDto> getAll() {
+    public List<Ingredient> getAll() {
         return ingredientRepository.getAll().stream()
-                .map(IngredientDto::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public Optional<IngredientDto> getById(Long id) {
+    public Optional<Ingredient> getById(Long id) {
         Optional<Ingredient> ingredient = ingredientRepository.getById(id);
         if (!ingredient.isPresent()) {
             throw new ElementNotFoundException();
         }
-        return Optional.ofNullable(new IngredientDto(ingredient.get()));
+        return ingredient;
     }
 
     @Transactional
@@ -49,17 +43,19 @@ public class IngredientService {
     }
 
     @Transactional
-    public Optional<Ingredient> update(IngredientDto ingredientDto) {
-        return ingredientRepository.update(ingredientDto.toIngredient());
+    public Optional<Ingredient> update(Ingredient ingredient) {
+        return ingredientRepository.update(ingredient);
     }
 
     @Transactional
-    public void delete(IngredientDto ingredientDto) {
-        ingredientRepository.delete(ingredientDto.toIngredient());
+    public void delete(Ingredient ingredient) {
+        ingredientRepository.delete(ingredient);
     }
 
     @Transactional
     public void deleteById(Long id) {
         ingredientRepository.deleteById(id);
     }
+
+    //public void dropDB(){ ingredientRepository.dropDB();}
 }

@@ -1,21 +1,13 @@
 package com.ayabaroud.crudrestservice.controller;
 
-import com.ayabaroud.crudrestservice.dto.IngredientDto;
 import com.ayabaroud.crudrestservice.exceptions.ElementNotFoundException;
 import com.ayabaroud.crudrestservice.model.Ingredient;
 import com.ayabaroud.crudrestservice.services.IngredientService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -32,16 +24,16 @@ public class IngredientController {
 
     @CrossOrigin
     @GetMapping("/getAll")
-    public List<IngredientDto> getAll() {
+    public List<Ingredient> getAll() {
         return ingredientService.getAll();
     }
 
     @CrossOrigin
     @GetMapping("/getIngredientById/{id}")
-    public ResponseEntity<IngredientDto> getIngredientById(@PathVariable("id") final Long id) {
-        Optional<IngredientDto> ingredientDto = ingredientService.getById(id);
-        if (ingredientDto.isPresent()) {
-            return ResponseEntity.ok(ingredientDto.get());
+    public ResponseEntity<Ingredient> getIngredientById(@PathVariable("id") final Long id) {
+        Optional<Ingredient> ingredient = ingredientService.getById(id);
+        if (ingredient.isPresent()) {
+            return ResponseEntity.ok(ingredient.get());
         }
         throw new ElementNotFoundException();
     }
@@ -58,18 +50,18 @@ public class IngredientController {
 
     @CrossOrigin
     @PutMapping("/updateIngredient")
-    public ResponseEntity<Ingredient> updateIngredient(@RequestBody IngredientDto ingredientDto) {
-        Optional<Ingredient> ingredient = ingredientService.update(ingredientDto);
-        if (ingredient.isPresent()) {
-            return ResponseEntity.ok(ingredient.get());
+    public ResponseEntity<Ingredient> updateIngredient(@RequestBody Ingredient ingredient) {
+        Optional<Ingredient> ingredientOpt = ingredientService.update(ingredient);
+        if (ingredientOpt.isPresent()) {
+            return ResponseEntity.ok(ingredientOpt.get());
         }
         return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
     }
 
     @CrossOrigin
     @DeleteMapping("/deleteIngredient")
-    public void deleteIngredient(@RequestBody IngredientDto ingredientDto) {
-        ingredientService.delete(ingredientDto);
+    public void deleteIngredient(@RequestBody Ingredient ingredient) {
+        ingredientService.delete(ingredient);
     }
 
     @CrossOrigin

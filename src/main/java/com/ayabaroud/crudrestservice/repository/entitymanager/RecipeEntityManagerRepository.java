@@ -4,6 +4,7 @@ import com.ayabaroud.crudrestservice.model.Recipe;
 import com.ayabaroud.crudrestservice.repository.RecipeRepository;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Primary
 public class RecipeEntityManagerRepository implements RecipeRepository {
 
     private static final String QUERY_FIND_ALL = "from Recipe";

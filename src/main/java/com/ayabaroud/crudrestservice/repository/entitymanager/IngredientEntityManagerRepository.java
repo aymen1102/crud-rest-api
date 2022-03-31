@@ -4,6 +4,7 @@ import com.ayabaroud.crudrestservice.model.Ingredient;
 import com.ayabaroud.crudrestservice.repository.IngredientRepository;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

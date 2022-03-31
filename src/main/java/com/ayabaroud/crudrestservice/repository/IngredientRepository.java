@@ -17,5 +17,4 @@ public interface IngredientRepository {
      void delete(Ingredient ingredient);
 
      void deleteById(Long id);
-
 }

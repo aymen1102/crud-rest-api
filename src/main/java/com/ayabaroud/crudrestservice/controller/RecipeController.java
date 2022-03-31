@@ -1,23 +1,13 @@
 package com.ayabaroud.crudrestservice.controller;
 
-import com.ayabaroud.crudrestservice.dto.RecipeDto;
-import com.ayabaroud.crudrestservice.dto.RecipeIngredientDto;
 import com.ayabaroud.crudrestservice.exceptions.ElementNotFoundException;
+import com.ayabaroud.crudrestservice.model.Recipe;
+import com.ayabaroud.crudrestservice.model.RecipeIngredient;
 import com.ayabaroud.crudrestservice.services.RecipeService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,21 +25,21 @@ public class RecipeController {
     }
 
     @GetMapping("/getAll")
-    public List<RecipeDto> getAll() {
+    public List<Recipe> getAll() {
         return recipeService.getAll();
     }
 
     @GetMapping(value = "/getRecipeById/{id}")
-    public ResponseEntity<RecipeDto> getRecipeById(@PathVariable("id") final Long id) {
-        Optional<RecipeDto> recipeDto = recipeService.getById(id);
-        if (recipeDto.isPresent()) {
-            return ResponseEntity.ok(recipeDto.get());
+    public ResponseEntity<Recipe> getRecipeById(@PathVariable("id") final Long id) {
+        Optional<Recipe> recipe = recipeService.getById(id);
+        if (recipe.isPresent()) {
+            return ResponseEntity.ok(recipe.get());
         }
         throw new ElementNotFoundException();
     }
 
     @PostMapping("/createRecipe")
-    public ResponseEntity createRecipe(@RequestBody RecipeDto recipe) {
+    public ResponseEntity createRecipe(@RequestBody Recipe recipe) {
         Optional<Long> recipeId = recipeService.create(recipe);
         if (recipeId.isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(recipeId.get());
@@ -58,18 +48,18 @@ public class RecipeController {
     }
 
     @PatchMapping(value = "/ingredients")
-    public void addIngredients(@RequestParam("id") final Long id, @RequestBody List<RecipeIngredientDto> ingredients) {
+    public void addIngredients(@RequestParam("id") final Long id, @RequestBody List<RecipeIngredient> ingredients) {
         recipeService.addIngredients(id, ingredients);
     }
 
     @PutMapping("/updateRecipe")
-    public void updateRecipe(@RequestBody RecipeDto recipe) {
+    public void updateRecipe(@RequestBody Recipe recipe) {
         recipeService.update(recipe);
     }
 
     @DeleteMapping("/deleteRecipe")
-    public void deleteRecipe(@RequestBody RecipeDto recipeDto) {
-        recipeService.delete(recipeDto);
+    public void deleteRecipe(@RequestBody Recipe recipe) {
+        recipeService.delete(recipe);
     }
 
     @DeleteMapping(value = "deleteRecipeById/{id}")

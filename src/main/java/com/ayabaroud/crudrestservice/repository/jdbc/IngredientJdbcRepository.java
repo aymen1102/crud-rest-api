@@ -2,6 +2,7 @@ package com.ayabaroud.crudrestservice.repository.jdbc;
 
 import com.ayabaroud.crudrestservice.model.Ingredient;
 import com.ayabaroud.crudrestservice.repository.IngredientRepository;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -12,14 +13,11 @@ import java.util.Optional;
 @Repository
 public class IngredientJdbcRepository implements IngredientRepository {
 
-    public String databaseURL = "jdbc:postgresql://localhost:5432/restservices";
-    public String user = "postgres";
-    public String password = "postgres";
+    private static final String databaseURL = "jdbc:postgresql://localhost:5432/restservices";
+    private static final String user = "postgres";
+    public static final String password = "postgres";
 
-    public IngredientJdbcRepository(String databaseURL, String user, String password) {
-        this.databaseURL = databaseURL;
-        this.user = user;
-        this.password = password;
+    public IngredientJdbcRepository() {
     }
 
     public List<Ingredient> getAll() {
@@ -37,7 +35,7 @@ public class IngredientJdbcRepository implements IngredientRepository {
             /** Step 5 : loop the rersulset */
             while(resultSet.next()){
                 Ingredient ingredient = new Ingredient();
-                ingredient.setId(resultSet.getLong("ingredient_id"));
+                ingredient.setId(resultSet.getLong("id"));
                 ingredient.setName(resultSet.getString("name"));
                 ingredientList.add(ingredient);
             }
@@ -56,9 +54,9 @@ public class IngredientJdbcRepository implements IngredientRepository {
             /** Step 2 : Make a connection with DB */
             Connection connection = DriverManager.getConnection(databaseURL,user, password);
             /** Step 3 : Make a statement */
-            String request = "SELECT * FROM INGREDIENT WHERE ingredient_id = ?";
+            String request = "SELECT * FROM INGREDIENT WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(request);
-            preparedStatement.setLong(1, id);
+            preparedStatement.setLong(1, Optional.ofNullable(id).orElse(1L));
             /** Step 4 : Execute the request */
             ResultSet resultSet = preparedStatement.executeQuery();
             /** Step 5 : loop the rersulset */
@@ -81,11 +79,15 @@ public class IngredientJdbcRepository implements IngredientRepository {
             Connection connection = DriverManager.getConnection(databaseURL,user,password);
             PreparedStatement preparedStatement =
                     connection.prepareStatement(
-                            "INSERT INTO INGREDIENT (name) VALUES (?)");
+                            "INSERT INTO INGREDIENT (name) VALUES (?)",
+                                Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1,ingredient.getName());
-            OptionalId = Optional.ofNullable((long) preparedStatement.executeUpdate());
+            preparedStatement.executeUpdate();
+            ResultSet result = preparedStatement.getGeneratedKeys();
+            while(result.next()){
+                OptionalId = Optional.ofNullable(result.getLong(1));
+            }
         } catch (SQLException | ClassNotFoundException exception) {
-            exception.printStackTrace();
             exception.printStackTrace();
         }
         return OptionalId;
@@ -96,7 +98,7 @@ public class IngredientJdbcRepository implements IngredientRepository {
         try {
             Class.forName("org.postgresql.Driver");
             Connection connection = DriverManager.getConnection(databaseURL,user,password);
-            String request = "UPDATE INGREDIENT SET name=? WHERE ingredient_id=?";
+            String request = "UPDATE INGREDIENT SET name=? WHERE id=?";
             PreparedStatement preparedStatement = connection.prepareStatement(request);
             preparedStatement.setString(1,ingredient.getName());
             preparedStatement.setLong(2,ingredient.getId());
@@ -112,7 +114,7 @@ public class IngredientJdbcRepository implements IngredientRepository {
         try {
             Class.forName("org.postgresql.Driver");
             Connection connection = DriverManager.getConnection(databaseURL,user,password);
-            String request = "DELETE FROM INGREDIENT WHERE ingredient_id=? AND name=?";
+            String request = "DELETE FROM INGREDIENT WHERE id=? AND name=?";
             PreparedStatement preparedStatement = connection.prepareStatement(request);
             preparedStatement.setLong(1,ingredient.getId());
             preparedStatement.setString(2,ingredient.getName());
@@ -126,7 +128,7 @@ public class IngredientJdbcRepository implements IngredientRepository {
         try {
             Class.forName("org.postgresql.Driver");
             Connection connection = DriverManager.getConnection(databaseURL,user,password);
-            String request = "DELETE FROM INGREDIENT WHERE ingredient_id=?";
+            String request = "DELETE FROM INGREDIENT WHERE id=?";
             PreparedStatement preparedStatement = connection.prepareStatement(request);
             preparedStatement.setLong(1,id);
             preparedStatement.executeUpdate();
@@ -134,5 +136,6 @@ public class IngredientJdbcRepository implements IngredientRepository {
             exception.printStackTrace();
         }
     }
+
 
 }
